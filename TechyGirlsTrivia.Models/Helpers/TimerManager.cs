@@ -15,7 +15,7 @@ namespace TechyGirlsTrivia.Models.Helpers
         {
             _action = action;
             _autoResetEvent = new AutoResetEvent(false);
-            _timer = new Timer(Execute, _autoResetEvent, 1000, 2000);
+            _timer = new Timer(Execute, _autoResetEvent, 1000, 1000);
             TimerStarted = DateTime.Now;
         }
 
@@ -23,7 +23,7 @@ namespace TechyGirlsTrivia.Models.Helpers
         {
             _action();
 
-            if ((DateTime.Now - TimerStarted).Seconds > 60)
+            if ((DateTime.Now - TimerStarted).Seconds == 10)
             {
                 _timer.Dispose();
             }

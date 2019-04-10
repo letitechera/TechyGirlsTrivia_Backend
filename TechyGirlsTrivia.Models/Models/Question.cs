@@ -8,5 +8,8 @@ namespace TechyGirlsTrivia.Models.Models
     {
         public int QuestionId { get; set; }
         public string QuestionText { get; set; }
+        public List<Answer> Answers { get; set; }
+        public int CorrectAnswerId { get; set; }
+        public int CategoryId { get; set; }
     }
 }
