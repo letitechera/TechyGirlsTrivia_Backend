@@ -18,11 +18,11 @@ namespace TechyGirls.WebAPI.Controllers
             _hub = hub;
         }
 
-        // GET: api/<controller>
+        //[Route("timer")]
         [HttpGet]
         public IActionResult Get()
         {
-            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("transferdata", new Question { QuestionId = 0, QuestionText = "What's your Name?" }));
+            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("getTimer", 1));
             return Ok(new { Message = "Request Completed" });
         }
     }

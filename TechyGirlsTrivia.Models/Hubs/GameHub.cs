@@ -9,6 +9,8 @@ namespace TechyGirlsTrivia.Models.Hubs
 {
     public class GameHub: Hub
     {
-        public async Task BroadcastChartData(List<Question> data) => await Clients.All.SendAsync("broadcastchartdata", data);
+        public async Task BroadcastQuestion(Question data) => await Clients.All.SendAsync("showquestion", data);
+        public async Task BroadcastNewParticipant(bool data) => await Clients.All.SendAsync("newparticipant", data);
+        public async Task BroadcastStart(bool data) => await Clients.All.SendAsync("start", data);
     }
 }
