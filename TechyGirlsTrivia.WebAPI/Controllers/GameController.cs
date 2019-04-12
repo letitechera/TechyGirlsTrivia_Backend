@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using System;
 using TechyGirlsTrivia.Models.Helpers;
 using TechyGirlsTrivia.Models.Hubs;
 using TechyGirlsTrivia.Models.Models;
@@ -18,12 +19,21 @@ namespace TechyGirls.WebAPI.Controllers
             _hub = hub;
         }
 
-        //[Route("timer")]
+        [Route("timer")]
         [HttpGet]
         public IActionResult Get()
         {
             var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("getTimer", 1));
             return Ok(new { Message = "Request Completed" });
+        }
+
+        [Route("register")]
+        [HttpPost]
+        public Participant RegisterUser([FromBody]Participant p)
+        {
+            p.ParticipantId = Guid.NewGuid().ToString();
+            _hub.Clients.All.SendAsync("registerUser", p);
+            return p;
         }
     }
 }
