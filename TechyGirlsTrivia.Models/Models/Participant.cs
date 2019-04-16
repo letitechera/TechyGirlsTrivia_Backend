@@ -11,5 +11,6 @@ namespace TechyGirlsTrivia.Models.Models
         public string ParticipantImg { get; set; }
         public int Points { get; set; }
         public int Time { get; set; }
+        public string GameId { get; set; }
     }
 }

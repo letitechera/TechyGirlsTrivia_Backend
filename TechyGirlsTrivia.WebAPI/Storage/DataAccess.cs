@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TechyGirlsTrivia.Models.Models;
 
 namespace TechyGirlsTrivia.WebAPI.Storage
 {
@@ -20,30 +21,24 @@ namespace TechyGirlsTrivia.WebAPI.Storage
             await _storageManager.StoreEntity(entity, tableName);
         }
 
-        //public IEnumerable<Group> GetGroupsWithScores()
-        //{
-        //    var result = new List<Group>();
-        //    var groups = _storageManager.GetAllGroupsNames();
+        public IEnumerable<Participant> GetParticipants(string gameId)
+        {
+            return _storageManager.GetAllParticipants(gameId)
+                .Select(p => new Participant
+                {
+                    ParticipantId = p.RowKey,
+                    ParticipantName = p.ParticipantName,
+                    ParticipantImg = p.ParticipantImg,
+                    Points = p.TotalScore,
+                    Time = p.Time,
+                    GameId = gameId
+                }).ToList();
+        }
 
-        //    foreach (var g in groups)
-        //    {
-        //        var tableEntity = _storageManager.GetScoresByGroup(g);
-        //        var group = new Group
-        //        {
-        //            Name = g,
-        //            QuestionScores = tableEntity.Select(t =>
-        //            new QuestionScore
-        //            {
-        //                Question = t.RowKey,
-        //                Score = t.Score
-        //            }),
-        //            TotalScore = tableEntity.Sum(t => t.Score)
-        //        };
-
-
-        //        result.Add(group);
-        //    }
-        //    return result;
-        //}
+        public bool AlreadyExists(string name)
+        {
+            var results = _storageManager.SearchNames(name).ToList();
+            return results.Any();
+        }
     }
 }

@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
+using System.Threading.Tasks;
 using TechyGirlsTrivia.Models.Helpers;
 using TechyGirlsTrivia.Models.Hubs;
 using TechyGirlsTrivia.Models.Models;
+using TechyGirlsTrivia.WebAPI.Storage;
+using TechyGirlsTrivia.WebAPI.Storage.Tables;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -13,10 +16,12 @@ namespace TechyGirls.WebAPI.Controllers
     public class GameController : Controller
     {
         private IHubContext<GameHub> _hub;
+        private IDataAccess _accessData;
 
-        public GameController(IHubContext<GameHub> hub)
+        public GameController(IHubContext<GameHub> hub, IDataAccess accessData)
         {
             _hub = hub;
+            _accessData = accessData;
         }
 
         [Route("timer")]
@@ -29,11 +34,30 @@ namespace TechyGirls.WebAPI.Controllers
 
         [Route("register")]
         [HttpPost]
-        public Participant RegisterUser([FromBody]Participant p)
+        public async Task<IActionResult> RegisterUserAsync([FromBody]Participant p)
         {
-            p.ParticipantId = Guid.NewGuid().ToString();
-            _hub.Clients.All.SendAsync("registerUser", p);
-            return p;
+            try{
+                p.ParticipantId = Guid.NewGuid().ToString();
+                var pEntity = new ParticipantsTableEntity(p);
+
+                if (_accessData.AlreadyExists(p.ParticipantName))
+                {
+                    return NoContent();
+                }
+
+                //save
+                await _accessData.StoreEntity(pEntity, "Participants");
+
+                //broadcast list:
+                var returnList = _accessData.GetParticipants(p.GameId);
+                await _hub.Clients.All.SendAsync("registerUser", returnList);
+
+                return Ok(p);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
         }
     }
 }

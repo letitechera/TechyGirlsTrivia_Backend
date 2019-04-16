@@ -2,16 +2,26 @@
 using Microsoft.Azure;
 using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
+using TechyGirlsTrivia.WebAPI.Storage.Tables;
 
 namespace TechyGirlsTrivia.WebAPI.Storage
 {
-    public class StorageManager: IStorageManager
+    public class StorageManager : IStorageManager
     {
+        private readonly IConfiguration Configuration;
+
+        public StorageManager(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
         public async Task StoreEntity(ITableEntity entity, string tableName)
         {
             //CloudStorageAccount
-            var StorageConnectionString = "DefaultEndpointsProtocol=https;AccountName=triviadata;AccountKey=F1t/eggIoGscAMknEEEBki8npi5lPb+6GbeNJyrGWcPUSllIIE//N4U5lyCvH82tYyml6VeqGX1cSSWIzRfAng==;EndpointSuffix=core.windows.net";
-            var storageAccount = CloudStorageAccount.Parse(StorageConnectionString);
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var storageAccount = CloudStorageAccount.Parse(conectionString);
 
             //CloudTableClient
             var tableClient = storageAccount.CreateCloudTableClient();
@@ -27,26 +37,43 @@ namespace TechyGirlsTrivia.WebAPI.Storage
 
         }
 
-        //public List<string> GetAllGroupsNames()
-        //{
-        //    //CloudStorageAccount
-        //    var storageAccount = CloudStorageAccount.Parse(
-        //        CloudConfigurationManager.GetSetting("StorageConnectionString"));
+        public List<ParticipantsTableEntity> GetAllParticipants(string gameId)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
 
-        //    //CloudTableClient
-        //    var tableClient = storageAccount.CreateCloudTableClient();
+            var account = CloudStorageAccount.Parse(conectionString);
 
-        //    //CloudTable
-        //    var table = tableClient.GetTableReference("Group");
-        //    table.CreateIfNotExists();
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Participants");
 
-        //    // Construct the query operation for all entities where PartitionKey="Name".
-        //    var query = new TableQuery<GroupTableEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "Name"));
+            TableQuery<ParticipantsTableEntity> query = new TableQuery<ParticipantsTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, gameId));
 
-        //    return table.ExecuteQuery(query).Select(n => n.RowKey).ToList();
-        //    //return table.ExecuteQuery(query).Where(t => !t.RowKey.ToLower().Contains("test")).Select(n => n.RowKey).ToList();
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
 
-        //}
+            return result.Results;
+        }
+
+        public List<ParticipantsTableEntity> SearchNames(string name)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Participants");
+
+            TableQuery<ParticipantsTableEntity> query = new TableQuery<ParticipantsTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("ParticipantName", QueryComparisons.Equal, name));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
 
         //public List<GroupTableEntity> GetScoresByGroup(string groupName)
         //{
