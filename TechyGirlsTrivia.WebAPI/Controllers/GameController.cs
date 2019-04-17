@@ -59,5 +59,29 @@ namespace TechyGirls.WebAPI.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [Route("uploadimage")]
+        [HttpPost]
+        public async Task<IActionResult> PostSpeakerImage()
+        {
+            try
+            {
+                var file = Request.Form.Files[0];
+                if (file.Length > 0)
+                {
+                    var newFile = await _accessData.LoadUserImage(file);
+
+                    return Ok(new { newFile });
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }

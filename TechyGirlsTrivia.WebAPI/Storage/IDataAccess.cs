@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,5 +13,6 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         Task StoreEntity(ITableEntity entity, string tableName);
         IEnumerable<Participant> GetParticipants(string gameId);
         bool AlreadyExists(string name);
+        Task<string> LoadUserImage(IFormFile file);
     }
 }

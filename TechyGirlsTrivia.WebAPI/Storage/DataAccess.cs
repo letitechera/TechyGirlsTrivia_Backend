@@ -1,4 +1,5 @@
-﻿using Microsoft.WindowsAzure.Storage.Table;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,11 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         {
             var results = _storageManager.SearchNames(name).ToList();
             return results.Any();
+        }
+
+        public async Task<string> LoadUserImage(IFormFile file)
+        {
+            return await _storageManager.LoadUserImage(file);
         }
     }
 }

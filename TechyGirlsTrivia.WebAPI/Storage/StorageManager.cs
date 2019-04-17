@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using TechyGirlsTrivia.WebAPI.Storage.Tables;
+using Microsoft.AspNetCore.Http;
+using Microsoft.WindowsAzure.Storage.Blob;
+using System;
 
 namespace TechyGirlsTrivia.WebAPI.Storage
 {
@@ -41,7 +44,6 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         {
             //CloudStorageAccount
             var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
-            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
 
             var account = CloudStorageAccount.Parse(conectionString);
 
@@ -60,7 +62,6 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         {
             //CloudStorageAccount
             var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
-            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
 
             var account = CloudStorageAccount.Parse(conectionString);
 
@@ -75,23 +76,35 @@ namespace TechyGirlsTrivia.WebAPI.Storage
             return result.Results;
         }
 
-        //public List<GroupTableEntity> GetScoresByGroup(string groupName)
-        //{
-        //    //CloudStorageAccount
-        //    var storageAccount = CloudStorageAccount.Parse(
-        //        CloudConfigurationManager.GetSetting("StorageConnectionString"));
+        public async Task<string> LoadUserImage(IFormFile file)
+        {
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
 
-        //    //CloudTableClient
-        //    var tableClient = storageAccount.CreateCloudTableClient();
+            if (CloudStorageAccount.TryParse(conectionString, out var storageAccount))
+            {
+                CloudBlobClient blobClient = storageAccount.CreateCloudBlobClient();
+                CloudBlobContainer container = blobClient.GetContainerReference("userimages");
+                await container.CreateIfNotExistsAsync();
 
-        //    //CloudTable
-        //    var table = tableClient.GetTableReference("GroupScore");
-        //    table.CreateIfNotExists();
+                BlobContainerPermissions permissions = new BlobContainerPermissions
+                {
+                    PublicAccess = BlobContainerPublicAccessType.Blob
+                };
+                await container.SetPermissionsAsync(permissions);
 
-        //    // Construct the query operation for all entities where PartitionKey="groupName".
-        //    var query = new TableQuery<GroupTableEntity>().Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, groupName));
+                var guid = Guid.NewGuid();
 
-        //    return table.ExecuteQuery(query).ToList();
-        //}
+                var newName = $"user_{guid}.jpg";
+                var newBlob = container.GetBlockBlobReference(newName);
+                await newBlob.UploadFromStreamAsync(file.OpenReadStream());
+
+                return $"{basePath}/userimages/" + newName;
+            }
+            else
+            {
+                return "";
+            }
+        }
     }
 }
