@@ -16,6 +16,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage.Tables
 
         public string QuestionText { get; set; }
         public string CorrectAnswerId { get; set; }
-        public string CategoryId { get; set; }
+        public List<AnswersTableEntity> Answers { get; set; }
+        public bool IsAnswered { get; set; }
     }
 }

@@ -59,5 +59,22 @@ namespace TechyGirls.WebAPI.Controllers
                 return BadRequest(ex);
             }
         }
+
+        [Route("question")]
+        [HttpPost]
+        public async Task<IActionResult> SendQuestionAsync([FromBody]Participant p)
+        {
+            try
+            {
+                var returnList = _accessData.SendQuestion();
+                await _hub.Clients.All.SendAsync("sendQuestion", returnList);
+
+                return Ok(p);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
+        }
     }
 }
