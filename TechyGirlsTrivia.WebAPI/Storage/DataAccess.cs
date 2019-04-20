@@ -7,7 +7,7 @@ using TechyGirlsTrivia.Models.Models;
 
 namespace TechyGirlsTrivia.WebAPI.Storage
 {
-    public class DataAccess: IDataAccess
+    public class DataAccess : IDataAccess
     {
         private readonly IStorageManager _storageManager;
 
@@ -40,5 +40,38 @@ namespace TechyGirlsTrivia.WebAPI.Storage
             var results = _storageManager.SearchNames(name).ToList();
             return results.Any();
         }
+
+        public Question GetQuestion()
+        {
+            var questions = _storageManager.GetQuestion();
+            if (questions != null)
+            {
+                var q = questions.ToList().FirstOrDefault();
+                
+                return new Question
+                {
+                    CategoryId = q.CategoryId,
+                    CorrectAnswerId = q.CorrectAnswerId,
+                    QuestionId = int.Parse(q.RowKey),
+                    QuestionText = q.QuestionText,
+                    Answers = GetAnswers(int.Parse(q.RowKey))
+                };
+            }
+            return null;
+        }
+        #region private methods
+
+        private List<Answer> GetAnswers(int questionId)
+        {
+            var answers = _storageManager.GetAnswers(questionId);
+            return answers == null ? null :
+                 answers.ToList().Select(a => new Answer
+                 {
+                     AnswerId = int.Parse(a.RowKey),
+                     AnswerText = a.AnswerText
+                 }).ToList();
+        }
+
+        #endregion
     }
 }

@@ -12,5 +12,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         Task StoreEntity(ITableEntity entity, string tableName);
         List<ParticipantsTableEntity> SearchNames(string name);
         List<ParticipantsTableEntity> GetAllParticipants(string gameId);
+        List<QuestionsTableEntity> GetQuestion();
+        List<AnswersTableEntity> GetAnswers(int questionId);
     }
 }

@@ -13,10 +13,13 @@ namespace TechyGirlsTrivia.WebAPI.Storage.Tables
             this.PartitionKey = questionId;
             this.RowKey = questionNumber;
         }
+        public QuestionsTableEntity()
+        {
+        }
 
         public string QuestionText { get; set; }
-        public string CorrectAnswerId { get; set; }
-        public List<AnswersTableEntity> Answers { get; set; }
+        public int CorrectAnswerId { get; set; }
         public bool IsAnswered { get; set; }
+        public int CategoryId { get; set; }
     }
 }

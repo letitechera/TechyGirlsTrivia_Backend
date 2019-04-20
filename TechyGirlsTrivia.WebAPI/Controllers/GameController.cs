@@ -61,15 +61,15 @@ namespace TechyGirls.WebAPI.Controllers
         }
 
         [Route("question")]
-        [HttpPost]
-        public async Task<IActionResult> SendQuestionAsync([FromBody]Participant p)
+        [HttpGet]
+        public async Task<IActionResult> SendQuestionAsync()
         {
             try
             {
-                var returnList = _accessData.SendQuestion();
-                await _hub.Clients.All.SendAsync("sendQuestion", returnList);
+                var question = _accessData.GetQuestion();
+                await _hub.Clients.All.SendAsync("sendquestion", question);
 
-                return Ok(p);
+                return Ok(question);
             }
             catch (Exception ex)
             {

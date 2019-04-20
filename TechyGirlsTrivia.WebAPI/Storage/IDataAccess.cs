@@ -12,5 +12,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         Task StoreEntity(ITableEntity entity, string tableName);
         IEnumerable<Participant> GetParticipants(string gameId);
         bool AlreadyExists(string name);
+        Question GetQuestion();
+         
     }
 }

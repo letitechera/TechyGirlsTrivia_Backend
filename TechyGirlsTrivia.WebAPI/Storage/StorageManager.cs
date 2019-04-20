@@ -74,6 +74,45 @@ namespace TechyGirlsTrivia.WebAPI.Storage
 
             return result.Results;
         }
+        
+        public List<QuestionsTableEntity> GetQuestion()
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Questions");
+
+            TableQuery<QuestionsTableEntity> query = new TableQuery<QuestionsTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("IsAnswered", QueryComparisons.Equal, "false"));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
+
+        public List<AnswersTableEntity> GetAnswers(int questionId)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var basePath = Configuration.GetValue<string>("StorageConfig:BaseStoragePath");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Answers");
+
+            TableQuery<AnswersTableEntity> query = new TableQuery<AnswersTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("QuestionId", QueryComparisons.Equal, questionId.ToString()));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
+
 
         //public List<GroupTableEntity> GetScoresByGroup(string groupName)
         //{
