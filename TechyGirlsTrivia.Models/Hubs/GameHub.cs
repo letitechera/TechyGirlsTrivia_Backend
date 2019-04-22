@@ -11,7 +11,7 @@ namespace TechyGirlsTrivia.Models.Hubs
     {
         public async Task BroadcastQuestion(Question data) => await Clients.All.SendAsync("showquestion", data);
         public async Task BroadcastNewParticipant(bool data) => await Clients.All.SendAsync("newparticipant", data);
-        public async Task BroadcastStart(bool data) => await Clients.All.SendAsync("start", data);
+        public async Task BroadcastStart(bool data) => await Clients.All.SendAsync("broadcastStart", data);
 
         public string GetConnectionId()
         {
