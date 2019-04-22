@@ -10,6 +10,8 @@ namespace TechyGirlsTrivia.Models.Models
         public string QuestionText { get; set; }
         public List<Answer> Answers { get; set; }
         public int CorrectAnswerId { get; set; }
+        public Category Category { get; set; }
+        public bool IsAnswered { get; set; }
         public int CategoryId { get; set; }
     }
 }

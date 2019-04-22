@@ -1,0 +1,22 @@
+[
+  {
+    "categoryId": 1,
+    "categoryName": "Historia",
+    "categoryLogo": "https://triviadata.blob.core.windows.net/categories/calendar.png"
+  },
+  {
+    "categoryId": 2,
+    "categoryName": "Tecnologia",
+    "categoryLogo": "https://triviadata.blob.core.windows.net/categories/tecnologia.png"
+  },
+  {
+    "categoryId": 3,
+    "categoryName": "Ciencias",
+    "categoryLogo": "https://triviadata.blob.core.windows.net/categories/biology@3x.png"
+  },
+  {
+    "categoryId": 4,
+    "categoryName": "Arte",
+    "categoryLogo": "https://triviadata.blob.core.windows.net/categories/tecnologia.png"
+  }
+]

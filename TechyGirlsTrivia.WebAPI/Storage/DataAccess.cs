@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAzure.Storage.Table;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,35 +44,51 @@ namespace TechyGirlsTrivia.WebAPI.Storage
 
         public Question GetQuestion()
         {
-            var questions = _storageManager.GetQuestion();
-            if (questions != null)
-            {
-                var q = questions.ToList().FirstOrDefault();
+            string questions = System.IO.File.ReadAllText(@"MockData\Question.json");
+
+            var question= JsonConvert.DeserializeObject<List<Question>>(questions).FirstOrDefault(q=>!q.IsAnswered);
+            question.Answers = GetAnswers(question.QuestionId);
+            question.Category = GetQuestionCategory(question.CategoryId);
+            return question;
+            //var questions = _storageManager.GetQuestion();
+            //if (questions != null)
+            //{
+            //    var q = questions.ToList().FirstOrDefault();
                 
-                return new Question
-                {
-                    CategoryId = q.CategoryId,
-                    CorrectAnswerId = q.CorrectAnswerId,
-                    QuestionId = int.Parse(q.RowKey),
-                    QuestionText = q.QuestionText,
-                    Answers = GetAnswers(int.Parse(q.RowKey))
-                };
-            }
-            return null;
+            //    return new Question
+            //    {
+            //        CategoryId = q.CategoryId,
+            //        CorrectAnswerId = q.CorrectAnswerId,
+            //        QuestionId = int.Parse(q.RowKey),
+            //        QuestionText = q.QuestionText,
+            //        Answers = GetAnswers(int.Parse(q.RowKey))
+            //    };
+            //}
+            //return null;
         }
         #region private methods
 
         private List<Answer> GetAnswers(int questionId)
         {
-            var answers = _storageManager.GetAnswers(questionId);
-            return answers == null ? null :
-                 answers.ToList().Select(a => new Answer
-                 {
-                     AnswerId = int.Parse(a.RowKey),
-                     AnswerText = a.AnswerText
-                 }).ToList();
+            string answers = System.IO.File.ReadAllText(@"MockData\Answers.json");
+
+            return JsonConvert.DeserializeObject<List<Answer>>(answers).Where(a=>a.QuestionId == questionId).ToList();
+            //var answers = _storageManager.GetAnswers(questionId);
+            //return answers == null ? null :
+            //     answers.ToList().Select(a => new Answer
+            //     {
+            //         AnswerId = int.Parse(a.RowKey),
+            //         AnswerText = a.AnswerText
+            //     }).ToList();
         }
 
+        private Category GetQuestionCategory(int categoryId)
+        {
+            string categories = System.IO.File.ReadAllText(@"MockData\QuestionCategory.json");
+
+            return JsonConvert.DeserializeObject<List<Category>>(categories).ToList().FirstOrDefault(c =>c.CategoryId == categoryId);
+          
+        }
         #endregion
     }
 }

@@ -1,0 +1,23 @@
+[
+  {
+    "questionText": "Quien fue la primer programadora",
+    "correctAnswerId": 2,
+    "isAnswered": false,
+    "categoryId": 1,
+    "questionId": 1
+  },
+  {
+    "questionText": "¿Quién descubrió la estructura del ADN?",
+    "correctAnswerId": 2,
+    "isAnswered": false,
+    "categoryId": 3,
+    "questionId": 2
+  },
+	{
+	  "questionText": "Question 3",
+	  "correctAnswerId": 2,
+	  "isAnswered": false,
+	  "categoryId": 3,
+	  "questionId": 3
+	}
+]
