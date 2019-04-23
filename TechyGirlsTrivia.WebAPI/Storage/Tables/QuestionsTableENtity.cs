@@ -8,14 +8,15 @@ namespace TechyGirlsTrivia.WebAPI.Storage.Tables
 {
     public class QuestionsTableEntity: TableEntity
     {
-        public QuestionsTableEntity(string questionId, string questionNumber)
+        public QuestionsTableEntity(string questionId, string categoryId)
         {
             this.PartitionKey = questionId;
-            this.RowKey = questionNumber;
+            this.RowKey = categoryId;
         }
 
+        public QuestionsTableEntity() { }
+
         public string QuestionText { get; set; }
-        public string CorrectAnswerId { get; set; }
-        public string CategoryId { get; set; }
+        public int CorrectAnswerId { get; set; }
     }
 }

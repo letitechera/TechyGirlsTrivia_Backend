@@ -14,5 +14,8 @@ namespace TechyGirlsTrivia.WebAPI.Storage.Tables
             this.RowKey = questionId;
         }
         public string AnswerText { get; set; }
+        public string AnswerLetter { get; set; }
+
+        public AnswersTableEntity() { }
     }
 }

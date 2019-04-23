@@ -36,6 +36,38 @@ namespace TechyGirlsTrivia.WebAPI.Storage
                 }).ToList();
         }
 
+        public IEnumerable<Question> GetQuestions(int questionId)
+        {
+            return _storageManager.GetQuestion(questionId)
+                .Select(q => new Question
+                {
+                    CategoryId = int.Parse(q.RowKey),
+                    QuestionId = questionId,
+                    CorrectAnswerId = q.CorrectAnswerId,
+                    QuestionText = q.QuestionText,
+                    Answers = GetAnswers(questionId).ToList(),
+                    Category = GetCategory(int.Parse(q.RowKey))
+                }).ToList();
+        }
+
+        public IEnumerable<Answer> GetAnswers(int questionId)
+        {
+            return _storageManager.GetAnswers(questionId).Select(a => new Answer
+            {
+                AnswerId = int.Parse(a.PartitionKey),
+                AnswerText = a.AnswerText,
+                AnswerLetter = a.AnswerLetter
+            });
+        }
+
+        public Category GetCategory(int categoryId) {
+            return _storageManager.GetCategory(categoryId).Select(c => new Category {
+                CategoryId = int.Parse(c.PartitionKey),
+                CategoryName = c.RowKey,
+                CategoryLogo = c.CategoryLogo
+            }).FirstOrDefault();
+        }
+
         public bool AlreadyExists(string name)
         {
             var results = _storageManager.SearchNames(name).ToList();

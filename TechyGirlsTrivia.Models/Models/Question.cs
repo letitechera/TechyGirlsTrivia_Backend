@@ -11,5 +11,6 @@ namespace TechyGirlsTrivia.Models.Models
         public List<Answer> Answers { get; set; }
         public int CorrectAnswerId { get; set; }
         public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }

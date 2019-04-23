@@ -76,6 +76,60 @@ namespace TechyGirlsTrivia.WebAPI.Storage
             return result.Results;
         }
 
+        public List<QuestionsTableEntity> GetQuestion(int questionId)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Questions");
+
+            TableQuery<QuestionsTableEntity> query = new TableQuery<QuestionsTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, questionId + ""));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
+
+        public List<AnswersTableEntity> GetAnswers(int questionId)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Answers");
+
+            TableQuery<AnswersTableEntity> query = new TableQuery<AnswersTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, questionId + ""));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
+
+        public List<CategoryTableEntity> GetCategory(int categoryId)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+
+            var account = CloudStorageAccount.Parse(conectionString);
+
+            CloudTableClient tableClient = account.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("Categories");
+
+            TableQuery<CategoryTableEntity> query = new TableQuery<CategoryTableEntity>()
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, categoryId + ""));
+
+            var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
+
+            return result.Results;
+        }
+
         public async Task<string> LoadUserImage(IFormFile file)
         {
             var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
