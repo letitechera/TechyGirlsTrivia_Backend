@@ -28,7 +28,7 @@ namespace TechyGirls.WebAPI.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("getTimer", 1));
+            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("startTimer", 1));
             return Ok(new { Message = "Request Completed" });
         }
 

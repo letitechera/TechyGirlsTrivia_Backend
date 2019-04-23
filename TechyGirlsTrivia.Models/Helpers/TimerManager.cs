@@ -23,7 +23,7 @@ namespace TechyGirlsTrivia.Models.Helpers
         {
             _action();
 
-            if ((DateTime.Now - TimerStarted).Seconds == 10)
+            if ((DateTime.Now - TimerStarted).Seconds == 5)
             {
                 _timer.Dispose();
             }
