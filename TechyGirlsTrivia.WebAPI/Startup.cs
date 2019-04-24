@@ -28,7 +28,7 @@ namespace TechyGirls.WebAPI
                   .AllowAnyHeader()
                   .AllowCredentials()
                   .AllowAnyMethod()
-                  //.WithOrigins("http://localhost:4200/home") //agregar el origin de localhost solo si se prueba local!!
+                  //.WithOrigins("http://localhost:4200/") //agregar el origin de localhost solo si se prueba local!!
                   ); 
             });
             services.AddSignalR();
