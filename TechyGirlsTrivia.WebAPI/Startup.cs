@@ -27,7 +27,7 @@ namespace TechyGirls.WebAPI
                   .AllowAnyOrigin()
                   .AllowAnyHeader()
                   .AllowCredentials()
-                  .AllowAnyMethod());
+                  .AllowAnyMethod()); //agregar el origin de localhost solo si se prueba local!!
             });
             services.AddSignalR();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

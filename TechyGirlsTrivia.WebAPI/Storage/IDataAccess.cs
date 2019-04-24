@@ -12,6 +12,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage
     {
         Task StoreEntity(ITableEntity entity, string tableName);
         IEnumerable<Participant> GetParticipants(string gameId);
+        Question GetQuestion(int questionId);
         bool AlreadyExists(string name);
         Task<string> LoadUserImage(IFormFile file);
     }

@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
-using TechyGirlsTrivia.Models.Models;
+using TechyGirlsTrivia.Models;
 
 namespace TechyGirlsTrivia.Models.Hubs
 {
-    public class GameHub: Hub
+    public class GameHub : Hub
     {
         public async Task BroadcastStart(bool data) => await Clients.All.SendAsync("broadcastStart", data);
+        //public async Task BroadcastAnswer(UserAnswer data) => await Clients.All.SendAsync("broadcastAnswer", data);
+
+        public async Task BroadcastAnswer(UserAnswer data)
+        {
+            await Clients.All.SendAsync("broadcastAnswer", data);
+        }
 
         public string GetConnectionId()
         {

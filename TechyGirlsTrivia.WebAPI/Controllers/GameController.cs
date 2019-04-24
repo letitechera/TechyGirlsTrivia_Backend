@@ -60,6 +60,15 @@ namespace TechyGirls.WebAPI.Controllers
             }
         }
 
+        [Route("question/{id}")]
+        [HttpGet]
+        public async Task<IActionResult> GetQuestion(int id)
+        {
+            var question = _accessData.GetQuestion(id);
+            await _hub.Clients.All.SendAsync("getQuestion", question);
+            return Ok(question);
+        }
+
         [Route("uploadimage")]
         [HttpPost]
         public async Task<IActionResult> PostSpeakerImage()
