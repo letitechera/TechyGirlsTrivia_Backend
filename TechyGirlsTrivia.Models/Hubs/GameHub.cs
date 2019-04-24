@@ -18,11 +18,11 @@ namespace TechyGirlsTrivia.Models.Hubs
 
         }
 
-        public async Task BroadcastStart(bool data) => await Clients.All.SendAsync("broadcastStart", data);
+        public async Task StartGame(bool data) => await Clients.All.SendAsync("startGame", data);
 
-        public async Task BroadcastAnswer(UserAnswer data)
+        public async Task SetAnswer(UserAnswer data)
         {
-            await Clients.All.SendAsync("broadcastAnswer", data);
+            await Clients.All.SendAsync("setAnswer", data);
 
             var userScore = new ParticipantsTableEntity
             {
