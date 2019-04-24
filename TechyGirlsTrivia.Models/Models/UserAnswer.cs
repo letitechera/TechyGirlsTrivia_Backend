@@ -10,5 +10,7 @@ namespace TechyGirlsTrivia.Models
         public int AnswerId { get; set; }
         public string ParticipantId { get; set; }
         public int Time { get; set; }
+        public int Score { get; set; }
+        public string GameId { get; set; }
     }
 }
