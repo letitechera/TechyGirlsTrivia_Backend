@@ -1,16 +1,17 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using TechyGirlsTrivia.Models.Storage;
 
 namespace TechyGirlsTrivia.Models.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly IConfiguration Configuration;
+        private readonly IDataAccess _dataAccess;
 
-        public GameHub(IConfiguration configuration)
+        public GameHub(IDataAccess dataAccess)
         {
-            Configuration = configuration;
+            _dataAccess = dataAccess;
 
         }
 
@@ -19,8 +20,7 @@ namespace TechyGirlsTrivia.Models.Hubs
         public async Task SetAnswer(UserAnswer data)
         {
             await Clients.All.SendAsync("setAnswer", data);
-
-
+            await _dataAccess.SaveAnswerAsync(data);
         }
 
         

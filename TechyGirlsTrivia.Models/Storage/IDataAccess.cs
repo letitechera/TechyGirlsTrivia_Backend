@@ -15,5 +15,6 @@ namespace TechyGirlsTrivia.Models.Storage
         Question GetQuestion(int questionId);
         bool AlreadyExists(string name);
         Task<string> LoadUserImage(IFormFile file);
+        Task SaveAnswerAsync(UserAnswer p);
     }
 }

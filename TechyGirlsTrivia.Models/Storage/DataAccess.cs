@@ -51,7 +51,7 @@ namespace TechyGirlsTrivia.Models.Storage
                 }).FirstOrDefault();
         }
 
-        public void SaveAnswer(Participant p)
+        public async Task SaveAnswerAsync(UserAnswer p)
         {
             var userScore = new ParticipantsTableEntity
             {
@@ -61,7 +61,7 @@ namespace TechyGirlsTrivia.Models.Storage
                 Time = p.Time,
             };
 
-            _storageManager.SaveAnswer(userScore);
+            await _storageManager.SaveAnswer(userScore);
         }
 
         public bool AlreadyExists(string name)
