@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TechyGirlsTrivia.Models.Models;
 
-namespace TechyGirlsTrivia.WebAPI.Storage.Tables
+namespace TechyGirlsTrivia.Models.Storage.Tables
 {
     public class ParticipantsTableEntity : TableEntity
     {
@@ -27,7 +27,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage.Tables
             RowKey = p.ParticipantId;
             ParticipantName = p.ParticipantName;
             ParticipantImg = p.ParticipantImg;
-            TotalScore = p.Points;
+            TotalScore = p.Score;
             Time = p.Time;
         }
 

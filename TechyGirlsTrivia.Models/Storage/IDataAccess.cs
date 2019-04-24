@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TechyGirlsTrivia.Models.Models;
 
-namespace TechyGirlsTrivia.WebAPI.Storage
+namespace TechyGirlsTrivia.Models.Storage
 {
     public interface IDataAccess
     {

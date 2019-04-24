@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TechyGirlsTrivia.WebAPI.Storage.Tables;
+using TechyGirlsTrivia.Models.Storage.Tables;
 
-namespace TechyGirlsTrivia.WebAPI.Storage
+namespace TechyGirlsTrivia.Models.Storage
 {
     public interface IStorageManager
     {
@@ -14,6 +14,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage
         List<ParticipantsTableEntity> SearchNames(string name);
         List<ParticipantsTableEntity> GetAllParticipants(string gameId);
         List<QuestionsTableEntity> GetQuestion(int questionId);
+        Task SaveAnswer(ParticipantsTableEntity participant);
         List<AnswersTableEntity> GetAnswers(int questionId);
         List<CategoryTableEntity> GetCategory(int categoryId);
         Task<string> LoadUserImage(IFormFile file);

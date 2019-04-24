@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using TechyGirlsTrivia.Models.Helpers;
 using TechyGirlsTrivia.Models.Hubs;
 using TechyGirlsTrivia.Models.Models;
-using TechyGirlsTrivia.WebAPI.Storage;
-using TechyGirlsTrivia.WebAPI.Storage.Tables;
+using TechyGirlsTrivia.Models.Storage;
+using TechyGirlsTrivia.Models.Storage.Tables;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 

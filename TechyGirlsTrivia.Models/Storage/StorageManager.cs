@@ -4,12 +4,12 @@ using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
-using TechyGirlsTrivia.WebAPI.Storage.Tables;
 using Microsoft.AspNetCore.Http;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System;
+using TechyGirlsTrivia.Models.Storage.Tables;
 
-namespace TechyGirlsTrivia.WebAPI.Storage
+namespace TechyGirlsTrivia.Models.Storage
 {
     public class StorageManager : IStorageManager
     {
@@ -56,6 +56,25 @@ namespace TechyGirlsTrivia.WebAPI.Storage
             var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
 
             return result.Results;
+        }
+
+        public async Task SaveAnswer(ParticipantsTableEntity participant)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var storageAccount = CloudStorageAccount.Parse(conectionString);
+
+            //CloudTableClient
+            var tableClient = storageAccount.CreateCloudTableClient();
+
+            //CloudTable
+            var table = tableClient.GetTableReference("Participants");
+            await table.CreateIfNotExistsAsync();
+
+            //TableOperation
+            var insertOperation = TableOperation.InsertOrMerge(participant);
+
+            await table.ExecuteAsync(insertOperation);
         }
 
         public List<ParticipantsTableEntity> SearchNames(string name)

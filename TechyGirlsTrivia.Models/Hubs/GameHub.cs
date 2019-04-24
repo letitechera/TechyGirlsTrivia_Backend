@@ -1,10 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Table;
 using System.Threading.Tasks;
-using TechyGirlsTrivia.Models;
-using TechyGirlsTrivia.Models.Storage.Tables;
 
 namespace TechyGirlsTrivia.Models.Hubs
 {
@@ -24,29 +20,7 @@ namespace TechyGirlsTrivia.Models.Hubs
         {
             await Clients.All.SendAsync("setAnswer", data);
 
-            var userScore = new ParticipantsTableEntity
-            {
-                PartitionKey = data.GameId,
-                RowKey = data.ParticipantId,
-                TotalScore = data.Score,
-                Time = data.Time,
-            };
 
-            //CloudStorageAccount
-            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
-            var storageAccount = CloudStorageAccount.Parse(conectionString);
-
-            //CloudTableClient
-            var tableClient = storageAccount.CreateCloudTableClient();
-
-            //CloudTable
-            var table = tableClient.GetTableReference("Participants");
-            await table.CreateIfNotExistsAsync();
-
-            //TableOperation
-            var insertOperation = TableOperation.InsertOrMerge(userScore);
-
-            await table.ExecuteAsync(insertOperation);
         }
 
         

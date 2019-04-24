@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TechyGirlsTrivia.WebAPI.Storage.Tables
-{
+namespace TechyGirlsTrivia.Models.Storage.Tables { 
+
     public class QuestionsTableEntity: TableEntity
     {
         public QuestionsTableEntity(string questionId, string categoryId)

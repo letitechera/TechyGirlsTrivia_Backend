@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TechyGirlsTrivia.Models.Models;
+using TechyGirlsTrivia.Models.Storage.Tables;
 
-namespace TechyGirlsTrivia.WebAPI.Storage
+namespace TechyGirlsTrivia.Models.Storage
 {
     public class DataAccess: IDataAccess
     {
@@ -30,7 +31,7 @@ namespace TechyGirlsTrivia.WebAPI.Storage
                     ParticipantId = p.RowKey,
                     ParticipantName = p.ParticipantName,
                     ParticipantImg = p.ParticipantImg,
-                    Points = p.TotalScore,
+                    Score = p.TotalScore,
                     Time = p.Time,
                     GameId = gameId
                 }).ToList();
@@ -48,6 +49,19 @@ namespace TechyGirlsTrivia.WebAPI.Storage
                     Answers = GetAnswers(questionId).ToList(),
                     Category = GetCategory(int.Parse(q.RowKey))
                 }).FirstOrDefault();
+        }
+
+        public void SaveAnswer(Participant p)
+        {
+            var userScore = new ParticipantsTableEntity
+            {
+                PartitionKey = p.GameId,
+                RowKey = p.ParticipantId,
+                TotalScore = p.Score,
+                Time = p.Time,
+            };
+
+            _storageManager.SaveAnswer(userScore);
         }
 
         public bool AlreadyExists(string name)
