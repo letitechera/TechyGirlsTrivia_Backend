@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Threading.Tasks;
@@ -32,6 +32,7 @@ namespace TechyGirls.WebAPI.Controllers
             return Ok(new { Message = "Request Completed" });
         }
 
+
         [Route("register")]
         [HttpPost]
         public async Task<IActionResult> RegisterUserAsync([FromBody]Participant p)
@@ -62,6 +63,7 @@ namespace TechyGirls.WebAPI.Controllers
         }
 
         [Route("question")]
+
         [HttpGet]
         public async Task<IActionResult> GetQuestion()
         {
