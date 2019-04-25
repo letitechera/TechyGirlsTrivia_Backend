@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Configuration;
+using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -41,10 +41,11 @@ namespace TechyGirlsTrivia.Models.Hubs
             await _dataAccess.SaveAnswerAsync(data);
         }
 
-        public async Task FinalResults()
+        public async Task FinalResults(string gameId)
         {
-            await Clients.All.SendAsync("setAnswer", data);
-            await _dataAccess.SaveAnswerAsync(data);
+            var allUsers = _dataAccess.GetParticipants(gameId) as List<Participant>;
+            var winners = allUsers.OrderByDescending(g => g.Score).Take(3);
+            await Clients.All.SendAsync("finalResults", winners);
         }
 
     }
