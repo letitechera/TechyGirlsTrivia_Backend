@@ -12,9 +12,13 @@ namespace TechyGirlsTrivia.Models.Storage
     {
         Task StoreEntity(ITableEntity entity, string tableName);
         IEnumerable<Participant> GetParticipants(string gameId);
-        Question GetQuestion(int questionId);
+        Question GetQuestion();
         bool AlreadyExists(string name);
         Task<string> LoadUserImage(IFormFile file);
         Task SaveAnswerAsync(UserAnswer p);
+        Task UpdateIsAnsweredAsync(Question question);
+        Task DeleteAllUsers();
+        Task ResetAllIsAnswered();
+        IEnumerable<Participant> GetWinners(string gameId);
     }
 }

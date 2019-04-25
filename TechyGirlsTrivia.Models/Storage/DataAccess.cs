@@ -9,7 +9,7 @@ using TechyGirlsTrivia.Models.Storage.Tables;
 
 namespace TechyGirlsTrivia.Models.Storage
 {
-    public class DataAccess: IDataAccess
+    public class DataAccess : IDataAccess
     {
         private readonly IStorageManager _storageManager;
 
@@ -37,18 +37,21 @@ namespace TechyGirlsTrivia.Models.Storage
                 }).ToList();
         }
 
-        public Question GetQuestion(int questionId)
+        public Question GetQuestion()
         {
-            return _storageManager.GetQuestion(questionId)
+            var question = _storageManager.GetQuestion()
                 .Select(q => new Question
                 {
                     CategoryId = int.Parse(q.RowKey),
-                    QuestionId = questionId,
+                    QuestionId = int.Parse(q.PartitionKey),
                     CorrectAnswerId = q.CorrectAnswerId,
                     QuestionText = q.QuestionText,
-                    Answers = GetAnswers(questionId).ToList(),
-                    Category = GetCategory(int.Parse(q.RowKey))
+                    Answers = GetAnswers(int.Parse(q.PartitionKey)).ToList(),
+                    Category = GetCategory(int.Parse(q.RowKey)),
+                    IsAnswered = true
                 }).FirstOrDefault();
+
+            return question;
         }
 
         public async Task SaveAnswerAsync(UserAnswer p)
@@ -64,6 +67,21 @@ namespace TechyGirlsTrivia.Models.Storage
             await _storageManager.SaveAnswer(userScore);
         }
 
+        public async Task UpdateIsAnsweredAsync(Question question)
+        {
+            var questionEntity = new QuestionsTableEntity
+            {
+                CorrectAnswerId = question.CorrectAnswerId,
+                PartitionKey = question.QuestionId.ToString(),
+                QuestionText = question.QuestionText,
+                RowKey = question.CategoryId.ToString(),
+                IsAnswered = true
+            };
+
+            await _storageManager.UpdateIsAnswered(questionEntity);
+
+        }
+
         public bool AlreadyExists(string name)
         {
             var results = _storageManager.SearchNames(name).ToList();
@@ -73,6 +91,29 @@ namespace TechyGirlsTrivia.Models.Storage
         public async Task<string> LoadUserImage(IFormFile file)
         {
             return await _storageManager.LoadUserImage(file);
+        }
+
+        public IEnumerable<Participant> GetWinners(string gameId)
+        {
+            return _storageManager.GetAllParticipants(gameId)
+                .Select(p => new Participant
+                {
+                    ParticipantId = p.RowKey,
+                    ParticipantName = p.ParticipantName,
+                    ParticipantImg = p.ParticipantImg,
+                    Score = p.TotalScore,
+                    Time = p.Time,
+                    GameId = gameId
+                }).ToList().OrderByDescending(p=>p.Score).OrderByDescending(p=>p.Time).Take(3);
+        }
+
+        public async Task DeleteAllUsers()
+        {
+            await _storageManager.DeleteAllUsers();
+        }
+        public async Task ResetAllIsAnswered()
+        {
+            await _storageManager.ResetAllIsAnswered();
         }
 
         private IEnumerable<Answer> GetAnswers(int questionId)
@@ -85,8 +126,10 @@ namespace TechyGirlsTrivia.Models.Storage
             });
         }
 
-        private Category GetCategory(int categoryId) {
-            return _storageManager.GetCategory(categoryId).Select(c => new Category {
+        private Category GetCategory(int categoryId)
+        {
+            return _storageManager.GetCategory(categoryId).Select(c => new Category
+            {
                 CategoryId = int.Parse(c.PartitionKey),
                 CategoryName = c.RowKey,
                 CategoryLogo = c.CategoryLogo

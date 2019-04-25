@@ -95,7 +95,7 @@ namespace TechyGirlsTrivia.Models.Storage
             return result.Results;
         }
 
-        public List<QuestionsTableEntity> GetQuestion(int questionId)
+        public List<QuestionsTableEntity> GetQuestion()
         {
             //CloudStorageAccount
             var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
@@ -106,12 +106,73 @@ namespace TechyGirlsTrivia.Models.Storage
             CloudTable table = tableClient.GetTableReference("Questions");
 
             TableQuery<QuestionsTableEntity> query = new TableQuery<QuestionsTableEntity>()
-                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, questionId + ""));
+                .Where(TableQuery.GenerateFilterCondition("IsAnswered", QueryComparisons.Equal,"false"));
 
             var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
 
             return result.Results;
         }
+
+        public async Task  UpdateIsAnswered(QuestionsTableEntity question)
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var storageAccount = CloudStorageAccount.Parse(conectionString);
+
+            //CloudTableClient
+            var tableClient = storageAccount.CreateCloudTableClient();
+
+            //CloudTable
+            var table = tableClient.GetTableReference("Questions");
+            await table.CreateIfNotExistsAsync();
+
+            //TableOperation
+            var insertOperation = TableOperation.InsertOrMerge(question);
+
+            await table.ExecuteAsync(insertOperation);
+        }
+
+        public async Task ResetAllIsAnswered()
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var storageAccount = CloudStorageAccount.Parse(conectionString);
+
+            //CloudTableClient
+            var tableClient = storageAccount.CreateCloudTableClient();
+
+            //CloudTable
+            var table = tableClient.GetTableReference("Questions");
+            await table.CreateIfNotExistsAsync();
+            
+            var entity = new DynamicTableEntity("PartitionKey", "RowKey");
+            entity.ETag = "*";
+            entity.Properties.Add("IsAnswered", new EntityProperty(false));
+            var mergeOperation = TableOperation.Merge(entity);
+            await table.ExecuteAsync(mergeOperation);
+        }
+
+        public async Task DeleteAllUsers()
+        {
+            //CloudStorageAccount
+            var conectionString = Configuration.GetValue<string>("StorageConfig:StringConnection");
+            var storageAccount = CloudStorageAccount.Parse(conectionString);
+
+            //CloudTableClient
+            var tableClient = storageAccount.CreateCloudTableClient();
+
+            //CloudTable
+            var table = tableClient.GetTableReference("Questions");
+            await table.CreateIfNotExistsAsync();
+
+            var entity = new DynamicTableEntity("PartitionKey", "RowKey");
+            entity.ETag = "*";
+           
+            var mergeOperation = TableOperation.Delete(entity);
+            await table.ExecuteAsync(mergeOperation);
+        }
+
+        
 
         public List<AnswersTableEntity> GetAnswers(int questionId)
         {

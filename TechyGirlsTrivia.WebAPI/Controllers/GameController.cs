@@ -24,11 +24,11 @@ namespace TechyGirls.WebAPI.Controllers
             _accessData = accessData;
         }
 
-        [Route("timer")]
+
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult GetQuestionTimer()
         {
-            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("startTimer", 1));
+            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("startTimer", GetQuestion()));
             return Ok(new { Message = "Request Completed" });
         }
 
@@ -36,7 +36,8 @@ namespace TechyGirls.WebAPI.Controllers
         [HttpPost]
         public async Task<IActionResult> RegisterUserAsync([FromBody]Participant p)
         {
-            try{
+            try
+            {
                 p.ParticipantId = Guid.NewGuid().ToString();
                 var pEntity = new ParticipantsTableEntity(p);
 
@@ -60,12 +61,17 @@ namespace TechyGirls.WebAPI.Controllers
             }
         }
 
-        [Route("question/{id}")]
+        [Route("question")]
         [HttpGet]
-        public async Task<IActionResult> GetQuestion(int id)
+        public async Task<IActionResult> GetQuestion()
         {
-            var question = _accessData.GetQuestion(id);
+            var question = _accessData.GetQuestion();
+            if (question != null)
+            {
+                var update = _accessData.UpdateIsAnsweredAsync(question);
+            }
             await _hub.Clients.All.SendAsync("getQuestion", question);
+
             return Ok(question);
         }
 
@@ -86,6 +92,38 @@ namespace TechyGirls.WebAPI.Controllers
                 {
                     return BadRequest();
                 }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Route("deleteUsers")]
+        [HttpPost]
+        public  IActionResult DeleteAllUsers()
+        {
+            try
+            {
+                var question = _accessData.DeleteAllUsers();
+
+                return Ok("Users deleted");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        [Route("ResetQuestions")]
+        [HttpPost]
+        public IActionResult ResetIsAnsweredQuestions()
+        {
+            try
+            {
+                var question = _accessData.ResetAllIsAnswered();
+
+                return Ok("Questions updated");
             }
             catch (Exception ex)
             {

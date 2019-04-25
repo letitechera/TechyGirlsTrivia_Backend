@@ -18,5 +18,6 @@ namespace TechyGirlsTrivia.Models.Storage.Tables {
 
         public string QuestionText { get; set; }
         public int CorrectAnswerId { get; set; }
+        public bool IsAnswered { get; set; }
     }
 }

@@ -15,15 +15,16 @@ namespace TechyGirlsTrivia.Models.Helpers
         {
             _action = action;
             _autoResetEvent = new AutoResetEvent(false);
-            _timer = new Timer(Execute, _autoResetEvent, 1000, 1000);
+            _timer = new Timer(Execute, _autoResetEvent, 1000, 20000);
             TimerStarted = DateTime.Now;
         }
+
 
         public void Execute(object stateInfo)
         {
             _action();
 
-            if ((DateTime.Now - TimerStarted).Seconds == 5)
+            if ((DateTime.Now - TimerStarted).Seconds >20)
             {
                 _timer.Dispose();
             }
