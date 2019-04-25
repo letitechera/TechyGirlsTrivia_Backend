@@ -32,34 +32,6 @@ namespace TechyGirls.WebAPI.Controllers
             return Ok(new { Message = "Request Completed" });
         }
 
-        [Route("register")]
-        [HttpPost]
-        public async Task<IActionResult> RegisterUserAsync([FromBody]Participant p)
-        {
-            try{
-                p.ParticipantId = Guid.NewGuid().ToString();
-                var pEntity = new ParticipantsTableEntity(p);
-
-                if (_accessData.AlreadyExists(p.ParticipantName))
-                {
-                    return NoContent();
-                }
-
-                //save
-                await _accessData.StoreEntity(pEntity, "Participants");
-
-                //broadcast list:
-                var returnList = _accessData.GetParticipants(p.GameId);
-                await _hub.Clients.All.SendAsync("registerUser", returnList);
-
-                return Ok(p);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
         [Route("question/{id}")]
         [HttpGet]
         public async Task<IActionResult> GetQuestion(int id)
