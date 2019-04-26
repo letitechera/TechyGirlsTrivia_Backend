@@ -24,57 +24,23 @@ namespace TechyGirls.WebAPI.Controllers
             _accessData = accessData;
         }
 
-
+        [Route("getQ")]
         [HttpGet]
-        public IActionResult GetQuestionTimer()
+        public IActionResult getQ()
         {
-            var timerManager = new TimerManager(() => _hub.Clients.All.SendAsync("startTimer", GetQuestion()));
+            _hub.Clients.All.SendAsync("getQuestion", GetQuestion());
             return Ok(new { Message = "Request Completed" });
         }
 
-
-        [Route("register")]
-        [HttpPost]
-        public async Task<IActionResult> RegisterUserAsync([FromBody]Participant p)
-        {
-            try
-            {
-                p.ParticipantId = Guid.NewGuid().ToString();
-                var pEntity = new ParticipantsTableEntity(p);
-
-                if (_accessData.AlreadyExists(p.ParticipantName))
-                {
-                    return NoContent();
-                }
-
-                //save
-                await _accessData.StoreEntity(pEntity, "Participants");
-
-                //broadcast list:
-                var returnList = _accessData.GetParticipants(p.GameId);
-                await _hub.Clients.All.SendAsync("registerUser", returnList);
-
-                return Ok(p);
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
-        }
-
-        [Route("question")]
-
-        [HttpGet]
-        public async Task<IActionResult> GetQuestion()
+        private Question GetQuestion()
         {
             var question = _accessData.GetQuestion();
-            if (question != null)
+            if (question == null)
             {
-                var update = _accessData.UpdateIsAnsweredAsync(question);
+                return new Question();
             }
-            await _hub.Clients.All.SendAsync("getQuestion", question);
-
-            return Ok(question);
+            var update = _accessData.UpdateIsAnsweredAsync(question);
+            return question;
         }
 
         [Route("uploadimage")]
@@ -103,7 +69,7 @@ namespace TechyGirls.WebAPI.Controllers
 
         [Route("deleteUsers")]
         [HttpPost]
-        public  IActionResult DeleteAllUsers()
+        public IActionResult DeleteAllUsers()
         {
             try
             {

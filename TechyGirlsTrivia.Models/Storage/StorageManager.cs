@@ -106,7 +106,7 @@ namespace TechyGirlsTrivia.Models.Storage
             CloudTable table = tableClient.GetTableReference("Questions");
 
             TableQuery<QuestionsTableEntity> query = new TableQuery<QuestionsTableEntity>()
-                .Where(TableQuery.GenerateFilterCondition("IsAnswered", QueryComparisons.Equal,"false"));
+                .Where(TableQuery.GenerateFilterCondition("IsAnswered", QueryComparisons.Equal, "false"));
 
             var result = table.ExecuteQuerySegmentedAsync(query, null).Result;
 
@@ -147,7 +147,7 @@ namespace TechyGirlsTrivia.Models.Storage
             
             var entity = new DynamicTableEntity("PartitionKey", "RowKey");
             entity.ETag = "*";
-            entity.Properties.Add("IsAnswered", new EntityProperty(false));
+            entity.Properties.Add("IsAnswered", new EntityProperty("false"));
             var mergeOperation = TableOperation.Merge(entity);
             await table.ExecuteAsync(mergeOperation);
         }

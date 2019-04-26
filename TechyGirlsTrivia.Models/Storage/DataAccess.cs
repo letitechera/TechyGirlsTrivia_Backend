@@ -75,11 +75,10 @@ namespace TechyGirlsTrivia.Models.Storage
                 PartitionKey = question.QuestionId.ToString(),
                 QuestionText = question.QuestionText,
                 RowKey = question.CategoryId.ToString(),
-                IsAnswered = true
+                IsAnswered = "true"
             };
 
             await _storageManager.UpdateIsAnswered(questionEntity);
-
         }
 
         public bool AlreadyExists(string name)
